@@ -81,3 +81,15 @@ deploy:
   type: git
   repo: https://github.com/jinfei21/finix.github.io.git
   branch: master
+
+algolia:
+  applicationID: QN439VZMB2
+  apiKey: 63906b89df659ea85cc99cec233a375d
+  adminApiKey: 0bc09b1d388f1fe0db713848fd5dd8f2
+  indexName: myblog
+  chunkSize: 5000
+  fields:
+    - title
+    - slug
+    - path
+    - content:strip
