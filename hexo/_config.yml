@@ -81,7 +81,7 @@ baidushare: true #百度分享功能
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/jinfei21/finix.github.io.git
+  repo: https://jinfei21:loveman21@github.com/jinfei21/finix.github.io.git
   branch: master
 
 # Extensions
