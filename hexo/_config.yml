@@ -5,7 +5,7 @@
 # Site
 title: 金飞的个人博客
 subtitle: 上善若水，知行合一
-description:
+description: 简单靠谱，追求自由
 keywords: 哲学 佛学 互联网 
 author: 费永军
 language: zh-Hans
@@ -83,6 +83,22 @@ deploy:
   type: git
   repo: https://github.com/jinfei21/finix.github.io.git
   branch: master
+
+# Extensions
+Plugins:
+- hexo-generator-feed
+- hexo-generator-sitemap
+#Feed Atom
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+#sitemap
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
 
 algolia:
   applicationID: QN439VZMB2

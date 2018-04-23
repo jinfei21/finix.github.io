@@ -126,9 +126,9 @@ scheme: Pisces
 # Key is the link label showing to end users.
 # Value before `||` delimeter is the target permalink.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
-#social:
-  #GitHub: https://github.com/yourname || github
-  #E-Mail: mailto:yourname@gmail.com || envelope
+social:
+  GitHub: https://github.com/jinfei21 || github
+  E-Mail: mailto:63581560@qq.com || envelope
   #Google: https://plus.google.com/yourname || google
   #Twitter: https://twitter.com/yourname || twitter
   #FB Page: https://www.facebook.com/yourname || facebook
@@ -395,22 +395,22 @@ valine:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
-livere_uid: MTAyMC8zNTkyOC8xMjQ2NA==
+#livere_uid: MTAyMC8zNTkyOC8xMjQ2NA==
 
 # Gitment
 # Introduction: https://imsun.net/posts/gitment-introduction/
 # You can get your Github ID from https://api.github.com/users/<Github username>
 gitment:
-  enable: false
+  enable: true
   mint: true # RECOMMEND, A mint on Gitment, to support count, language and proxy_gateway
   count: true # Show comments count in post meta area
   lazy: false # Comments lazy loading with a button
   cleanly: false # Hide 'Powered by ...' on footer, and more
   language: # Force language, or auto switch by theme
-  github_user: jinfei21# MUST HAVE, Your Github ID
-  github_repo: jinfei21.github.io# MUST HAVE, The repo you use to store Gitment comments
-  client_id: 8325bfa482f02420d1a4# MUST HAVE, Github client id for the Gitment
-  client_secret: 625a5119e1add65226f77a044fa49e2a014be192# EITHER this or proxy_gateway, Github access secret token for the Gitment
+  github_user: jinfei21 # MUST HAVE, Your Github ID
+  github_repo: jinfei21.github.io # MUST HAVE, The repo you use to store Gitment comments
+  client_id: 8325bfa482f02420d1a4 # MUST HAVE, Github client id for the Gitment
+  client_secret: 625a5119e1add65226f77a044fa49e2a014be192 # EITHER this or proxy_gateway, Github access secret token for the Gitment
   proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
   redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled
 
@@ -444,7 +444,7 @@ baidushare:
 #           Technorati,Posterous,Tumblr,GoogleBookmarks,Newsvine,
 #           Evernote,Friendfeed,Vkontakte,Odnoklassniki,Mailru
 needmoreshare2:
-  enable: true
+  enable: false
   postbottom:
     enable: true
     options:
@@ -560,8 +560,8 @@ busuanzi_count:
   site_pv_footer: 次
   # custom pv span for one page only
   page_pv: true
-  page_pv_header: <i class="fa fa-file-o"></i>
-  page_pv_footer:
+  page_pv_header: <i class="fa fa-file-o">阅读量</i>
+  page_pv_footer: 次
 
 
 # Tencent analytics ID
@@ -593,7 +593,7 @@ calendar:
 
 # Algolia Search
 algolia_search:
-  enable: true
+  enable: false
   hits:
     per_page: 10
   labels:
@@ -604,12 +604,12 @@ algolia_search:
 # Local search
 # Dependencies: https://github.com/flashlab/hexo-generator-search
 local_search:
-  enable: false
+  enable: true
   # if auto, trigger search by changing input
   # if manual, trigger search by pressing enter key or search button
   trigger: auto
   # show top n results per article, show all results by setting to -1
-  top_n_per_article: 1
+  top_n_per_article: -1
 
 
 # ---------------------------------------------------------------
