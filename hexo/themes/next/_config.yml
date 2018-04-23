@@ -146,11 +146,11 @@ social_icons:
 
 # Blog rolls
 links_icon: link
-links_title: Links
+links_title: 友情链接
 links_layout: block
 #links_layout: inline
-#links:
-  #Title: http://example.com/
+links:
+  拍拍贷: http://techblog.ppdai.com/
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
@@ -226,7 +226,8 @@ post_meta:
   created_at: true
   updated_at: false
   categories: true
-
+  author: true
+  
 # Post wordcount display settings
 # Dependencies: https://github.com/willin/hexo-wordcount
 post_wordcount:
@@ -243,8 +244,8 @@ post_wordcount:
 #  description: ex. subscribe to my blog by scanning my public wechat account
 
 # Reward
-#reward_comment: Donate comment here
-#wechatpay: /images/wechatpay.jpg
+reward_comment: 坚持原创技术分享，您的支持将鼓励我继续创作！
+wechatpay: /images/wechatpay.jpg
 #alipay: /images/alipay.jpg
 #bitcoin: /images/bitcoin.png
 
