@@ -150,8 +150,10 @@ links_title: 友情链接
 links_layout: block
 #links_layout: inline
 links:
-  拍拍贷: http://techblog.ppdai.com/
-
+  阮一峰: http://www.ruanyifeng.com
+  王垠: http://www.yinwang.org
+  廖雪峰: https://www.liaoxuefeng.com
+  云风: https://blog.codingnow.com
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
 # in site  directory(source/uploads): /uploads/avatar.gif
@@ -246,7 +248,7 @@ post_wordcount:
 # Reward
 reward_comment: 坚持原创技术分享，您的支持将鼓励我继续创作！
 wechatpay: /images/wechatpay.jpg
-#alipay: /images/alipay.jpg
+alipay: /images/alipay.jpg
 #bitcoin: /images/bitcoin.png
 
 # Declare license on posts
