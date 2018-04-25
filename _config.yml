@@ -74,7 +74,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: yilia
 
 baidushare: true #百度分享功能
 
@@ -82,7 +82,7 @@ baidushare: true #百度分享功能
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   - type: git
-    repo: https://github.com/jinfei21/finix.github.io.git
+    repo: https://github.com/jinfei21/jinfei21.github.io.git
     branch: master
   - type: baidu_url_submitter ## 这是新加的
 
@@ -126,3 +126,22 @@ algolia:
     - slug
     - path
     - content:strip
+
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true

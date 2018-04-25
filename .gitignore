@@ -2,3 +2,14 @@
 *.log
 node_modules/
 .deploy*/
+public/lib/
+public/index.html
+public/js/
+public/images/
+public/categories/
+public/archives/
+public/about/
+public/fonts/
+public/tags/
+public/img/
+public/2018/
