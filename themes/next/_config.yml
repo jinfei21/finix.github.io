@@ -384,8 +384,8 @@ changyan:
 # more info please open https://valine.js.org
 valine:
   enable: false
-  appid:  # your leancloud application appid
-  appkey:  # your leancloud application appkey
+  appid: MD0U8JohcdTnLCbEM0TOckKi-gzGzoHsz # your leancloud application appid
+  appkey: xsYnVcuoic5Nno6lDNXX2iK7 # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
   verify: false # Verification code
   placeholder: Just go go # comment box placeholder
@@ -400,13 +400,13 @@ valine:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
-#livere_uid: MTAyMC8zNTkyOC8xMjQ2NA==
+livere_uid: MTAyMC8zNTkyOC8xMjQ2NA==
 
 # Gitment
 # Introduction: https://imsun.net/posts/gitment-introduction/
 # You can get your Github ID from https://api.github.com/users/<Github username>
 gitment:
-  enable: true
+  enable: false
   mint: true # RECOMMEND, A mint on Gitment, to support count, language and proxy_gateway
   count: true # Show comments count in post meta area
   lazy: false # Comments lazy loading with a button
@@ -415,7 +415,7 @@ gitment:
   github_user: jinfei21 # MUST HAVE, Your Github ID
   github_repo: jinfei21.github.io # MUST HAVE, The repo you use to store Gitment comments
   client_id: 8325bfa482f02420d1a4 # MUST HAVE, Github client id for the Gitment
-  client_secret: 625a5119e1add65226f77a044fa49e2a014be192 # EITHER this or proxy_gateway, Github access secret token for the Gitment
+  client_secret: 3320a8a3d11a63f740e59f768cb1da67cd2bd026 # EITHER this or proxy_gateway, Github access secret token for the Gitment
   proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
   redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled
 
@@ -537,8 +537,8 @@ rating:
 # You can visit https://leancloud.cn get AppID and AppKey.
 leancloud_visitors:
   enable: false
-  app_id: #<app_id>
-  app_key: #<app_key>
+  app_id: MD0U8JohcdTnLCbEM0TOckKi-gzGzoHsz #<app_id>
+  app_key: xsYnVcuoic5Nno6lDNXX2iK7 #<app_key>
 
 # Another tool to show number of visitors to each article.
 # visit https://console.firebase.google.com/u/0/ to get apiKey and projectId
