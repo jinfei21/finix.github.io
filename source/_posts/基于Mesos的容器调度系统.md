@@ -71,11 +71,11 @@ author: 费永军
 #### 整体调度逻辑
 &emsp;&emsp;虽然整个调度逻辑不复杂，但是刚开始比较匆忙没有设计好，在实际开发测试过程中，经常因为状态不一致导致拆了东墙补西墙，而且前面两个版本对数据库冲击比较大，到目前第三个版本已经比较稳定了，各个模块之间都解耦了。调度逻辑如下图所示：
 ![](基于Mesos的容器调度系统/galaxy调度.png)
-&emsp;&emsp;首先是用户通过api或者界面添加相应的Deploy，我们定义一次发布单元叫Deploy，添加完Deploy之后，就等待mesos框架的调用，这是galaxy会根据一定规则先搜索Deploy库，找出active状态的Deploy，然后和mesos传过来的offer匹配，如果匹配上了就发起调用，否则拒绝offer。当发起完调用之后，galaxy就要等着更新task的状态，只有一个Deploy的所有task都启动完了，这个Deploy才算完成了调度，否则就算超时。这里面涉及到几个状态的更新，还是事务。
+&emsp;&emsp;首先是用户通过api或者界面添加相应的Deploy，我们定义一次发布单元叫Deploy，添加完Deploy之后，就等待mesos框架的调用，这时galaxy会根据一定规则先搜索Deploy库，找出active状态的Deploy，然后和mesos传过来的offer匹配，如果匹配上了就发起调用，否则拒绝offer。当发起完调用之后，galaxy就要等着更新task的状态，只有一个Deploy的所有task都启动完了，这个Deploy才算完成了调度，否则就算超时或失败。这里面涉及到几个状态的更新，还有事务。
 #### Galaxy界面
 &emsp;&emsp;目前处于最小可用版本，优先保证稳定性。整个操作简单易用，界面风格如下：
 ![](基于Mesos的容器调度系统/galaxy管理系统.png)
-&emsp;&emsp;用户可以主界面查看现有的Deploy列表和状态，也能激活和停止Deploy，还能扩容缩容Deploy。如果要添加Deploy，可以通过以下界面：
+&emsp;&emsp;用户可以在主界面查看现有的Deploy列表和状态，也能激活和停止Deploy，还能扩容缩容Deploy。如果要添加Deploy，可以通过以下界面：
 ![](基于Mesos的容器调度系统/deploy添加.png)
 &emsp;&emsp;用户填好相关内容，选择启动的类型，jar包或者image，然后指定相应的网络模型，如果是bridge还要指定相应的端口映射。其它还有一些相关操作就不做具体介绍了，有兴趣的朋友可以留言给我。
 #### Galaxy API
