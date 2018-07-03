@@ -119,7 +119,7 @@ POST /api/deploy
   ]
 }
 ```
-&emsp;&emsp;相关其它api还要很多，可以通过swagger ui查看，下图是通过swagger界面查看的相关Deploy的全部API：
+&emsp;&emsp;相关其它API还有很多，可以通过swagger ui查看，下图是通过swagger界面查看的相关Deploy的全部API：
 ![](基于Mesos的容器调度系统/deployapi.png)
 #### 容器监控
 &emsp;&emsp;容器监控有很多方案，我们采用的telegraf+grafana+karisdb做的，我也调研了Prometheus的相关方案。目前监控界面如下：
