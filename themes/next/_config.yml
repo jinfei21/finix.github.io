@@ -157,7 +157,7 @@ links:
   王辉: https://hui-wang.info
   王建硕: http://home.wangjianshuo.com/cn
   hellojava: http://hellojava.info
-  
+  龙泉之声: http://www.longquanzs.org/
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
 # in site  directory(source/uploads): /uploads/avatar.gif
@@ -233,7 +233,7 @@ post_meta:
   updated_at: false
   categories: true
   author: true
-  
+
 # Post wordcount display settings
 # Dependencies: https://github.com/willin/hexo-wordcount
 post_wordcount:
