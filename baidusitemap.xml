@@ -4,28 +4,8 @@
 
     
   <url>
-    <loc>https://jinfei21.github.io/2018/10/30/%E6%B5%85%E8%B0%88%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2018-10-31T03:04:40.578Z</lastmod>
-    <data>
-        <display>
-        <title>浅谈深度学习</title>
-        <pubTime>2018-10-30T03:13:05.000Z</pubTime>
-        
-        <tag>机器学习</tag>
-         
-         
-           
-             
-              <breadCrumb title="技术" url="https://jinfei21.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jinfei21.github.io/2018/10/28/%E5%85%B3%E4%BA%8E%E6%8C%A3%E9%92%B1%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/</loc>
-    <lastmod>2018-10-29T06:20:05.070Z</lastmod>
+    <lastmod>2018-10-31T03:18:47.891Z</lastmod>
     <data>
         <display>
         <title>关于挣钱的一些思考</title>
@@ -37,6 +17,26 @@
            
              
               <breadCrumb title="杂说" url="https://jinfei21.github.io/categories/%E6%9D%82%E8%AF%B4/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jinfei21.github.io/2018/10/30/%E6%B5%85%E8%B0%88%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2018-10-31T03:13:03.079Z</lastmod>
+    <data>
+        <display>
+        <title>浅谈深度学习</title>
+        <pubTime>2018-10-30T03:13:05.000Z</pubTime>
+        
+        <tag>机器学习</tag>
+         
+         
+           
+             
+              <breadCrumb title="技术" url="https://jinfei21.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
           
         </display>
     </data>
