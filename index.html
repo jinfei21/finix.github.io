@@ -300,6 +300,301 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinfei21.github.io/2018/11/13/新一代微服务ServiceMesh演化之路/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="费永军">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="金飞的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/13/新一代微服务ServiceMesh演化之路/" itemprop="url">新一代微服务ServiceMesh演化之路</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-13T13:23:11+08:00">
+                2018-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>&emsp;&emsp;前段时间前老大发了一篇文章说不看好servicemesh，我个人不是很赞同这个观点。哲学上有句话说不是我们的认知能力要如实的反映认知对象，而是认知对象要符合我们的认知能力。观点的不同取决于你看问题的视角，没有孰是孰非。来公司也有一年多快两年时间了，过去一直做得就是微服务体系架构方面的工作。微服务也是近几年兴起的，我首次接触微服务还是在携程的时候。2014年微服务处于萌芽期，2015年成为热点，2016年基本普及了。现在传统企业开始转向微服务技术栈也是大势所趋了，直到最近2017年初出现了对微服务的反思，从而产生了新一代微服务技术ServiceMesh。今天就从个人视角聊聊ServiceMesh的产品思路究竟有何可取之处。谈一件事仅从一个孤立的事件是没法说清问题的，得通过趋势放大时间维度才能看得更清晰。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="什么是ServiceMesh"><a href="#什么是ServiceMesh" class="headerlink" title="什么是ServiceMesh"></a>什么是ServiceMesh</h3><p>&emsp;&emsp;这是一个新词最早由开发linkerd的Buoyant公司提出，2016年9月第一次公开使用这个术语。在2017年初的随着Linker的传入，ServiceMesh进入国内技术圈的视野，最早翻译为“服务啮合层”，由于比较拗口之后改成了服务网格。<br>&emsp;&emsp;那到底什么是ServiceMesh呢？Linkerd的CEO William是这样定义的：</p>
+<blockquote>
+<p>服务网格是一个基础设施层，功能在于处理服务间通信，职责是负责实现请求的可靠传递。在实践中，服务网格通常实现为轻量级网络代理，通常与应用程序部署在一起，但是对应用程序透明。</p>
+</blockquote>
+<p>&emsp;&emsp;单纯的文字太抽象，还是通过下图来说明一下：<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/servicemesh定义.png" alt=""><br>&emsp;&emsp;从上图的部署模型上看，对于单个请求而言，作为请求的发起者的客户端实例会首先用简单的方式将请求发送到本地ServiceMesh实例上，客户端实例和ServiceMesh实例是两个独立的进程，他们之间的调用是远程调用。ServiceMesh会把客户端请求路由到目标服务，这时的ServiceMesh承担着服务发现和负载均衡的角色，就像一个sidecar。我们来看它和传统微服务调用有什么不同？<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/servicemesh对比.png" alt=""><br>&emsp;&emsp;实际上servicemesh就是在客户端和服务端之间多加了层代理而已，也不是什么新的东西。这是仅从单个服务之间调用的视角看，如果从多个服务调用视角看：<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/servicemesh网格.png" alt=""><br>&emsp;&emsp;多个服务调用的情况，从上图我们可以看到ServiceMesh在所有服务的下面，这一层被称为服务间通讯专用基础设施层。ServiceMesh会接管整个网络，把所有请求在服务之间做转发。这样上面的服务就不在担负传递请求的具体逻辑，只负责完成业务逻辑，服务的通讯环节就从应用层剥离出来，呈现一个抽象层。如果有大量的服务，就会表现出如下所示的网格来，这时候代理体现出来就和前面的有点不一样的，而是形成一个网状结构。<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/sidecar.png" alt=""><br>&emsp;&emsp;总结一下，服务网格实际上是抽象出了一个基础设施层，独立于应用之外，所提供的功能就是实现请求的可靠路由，部署上体现为轻量级的网络代理，而且对应用是透明的。</p>
+<h3 id="ServiceMesh的演化过程"><a href="#ServiceMesh的演化过程" class="headerlink" title="ServiceMesh的演化过程"></a>ServiceMesh的演化过程</h3><p>&emsp;&emsp;在第一代网络计算机系统时代，那时的程序猿需要在自己的代码里面处理网络通讯的细节问题，例如数据包顺序，流控等等，导致网络逻辑和业务逻辑混杂在一起。后来为了改进这一问题才出现了TCP/IP技术，解决了流控和数据包顺序问题，从下图可以看出，网络最重要的流控逻辑已经从应用逻辑中剥离开了，剥离出来的东西成了操作系统网络层的一部分。<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/原始时代.png" alt=""><br>&emsp;&emsp;自从有了TCP/IP技术，写代码再也不用考虑网卡怎么发了，这件事发生在五十年前。虽然不用考虑网卡数据包相关的问题了，但是随着服务数的增多，所要考虑的事情也很多，比如服务注册、服务发现、负载均衡等等。<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/微服务时代.png" alt=""><br>&emsp;&emsp;如上图所示，左边的是微服务时代第一版处理问题的方式，业务逻辑和熔断限流服务注册发现混杂在一起。为了简化开发，人们开始把这些和业务逻辑无关的封装成类库，比如典型的Netflix OSS套件。这样开发人们只需要写少量的代码，就能实现这些功能，极大解放的程序猿的业务压力。<br>&emsp;&emsp;但是凡事有利有弊，这样虽然解决了一部分问题，同时也会带来新问题。Netflix把每个通用的功能封装成一个个基础套件形成了一系列产品，比如像eureka、hystrix、feign、archiaus以及ribbon等等。开发人员是不需要开发非业务相关的代码了，也要花费相当的时间熟悉其中的原理，否则一旦出现问题就没法解决了。对业务团队的人来说，擅长的往往是对业务的理解而不是技术，实现业务是业务开发人员的核心价值，微服务是手段而不是目标。业务开发人员花相当多的精力学习这些和业务无关的框架是得不偿失的。相反比学习微服务框架更大的挑战是微服务拆分、API设计、数据一致性、康威定律。<br>&emsp;&emsp;微服务时代面临最大的挑战就是服务治理，特别是面临云原生的挑战，服务治理显得格外重要。但是Netflix OSS套件提供的十分粗糙不够强大。下图列举了一些服务治理常用的功能列表：<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/服务治理.png" alt=""><br>&emsp;&emsp;封装成类库带来的另一个问题就是跨语言。微服务在刚开始面世时就承诺了一个很重要的特性：不同微服务可以采用最适合的语言来编写。也就是微服务之间能实现跨语言的调用，如果是用类库的方式来实现，意味着所有的语言你都得实现一遍，其中还要考虑各个语言之间的类型转换等等，还有类库版本兼容问题都要考虑。更加严峻的现实是类库升级将是灾难。<br>&emsp;&emsp;因此基于以上这些情况，我们可以反思一下微服务的问题到底出在哪里？</p>
+<blockquote>
+<p>1.上面我们都在谈问题和挑战，好像没有说服务本身。问题的根源就是要解决服务通讯和路由，这才是微服务框架需要解决的问题。<br>2.上面所有的努力都是为了将客户端请求路由到挣钱的地方，比如有版本差异，需不需要做负载均衡，要不要做灰度，最终这些考虑都是为了将请求发送到正确的目的地址。<br>3.服务之间的调用请求，这个请求本身在传递过程中不会发生更改，而且这个请求能被不同的语言框架识别。</p>
+</blockquote>
+<p>&emsp;&emsp;类比以前的TCP/IP协议栈技术，它要解决的问题将请求发送到正确的地方。有了TCP/IP技术，应用开发就不用关心TCP层下的链路实现了。因此为什么现在开发微服务应用时要这么关心服务的通讯层呢？这种情况下自然产生一个想法，是否可以把微服务和通讯相关的下层为网络栈协议，也就是理想状态就是在网络协议层中添加一个微服务应用层来完成整个事情。虽然现在因为标准问题，实现起来不现实，但是不排除未来会出现一个微服务网络层。目前主流的方案在代理的基础上添加完善的治理功能，产生了有所谓数据平面和控制平面的ServiceMesh解决方案。目前开源社区最热门的ServiceMesh产品是Istio。</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>&emsp;&emsp;介绍完ServiceMesh的演进过程，虽然目前ServiceMesh方兴未艾，各个开源产品都在持续迭代中，同时也有不少质疑的声音，例如我的前老大，但是我还是非常看好ServiceMesh的发展前景。通过技术栈的下移，确实解决了不是问题。开发人员有了ServiceMesh以后，不用关注那么多插件的内容，只关注应用逻辑，ServiceMesh会把治理功能做强做大，它会解决跨语言跨协议的调用，ServiceMesh如果要升级对应用都是透明无感知的。有了ServiceMesh以后，客户端和服务端都及其简化，客户端只需要向ServiceMesh发出请求即可，会少很多类库依赖减少了jar冲突的风险，而服务端只要做一件事件就是服务注册。<br>&emsp;&emsp;ServiceMesh不仅方便了开发人员，对运维管理也将是革命性的变化。如果有了ServiceMesh的治理功能，运维对系统的管理和控制力极大增强，很多运维工作通过可视化的控制平面即可完成。<br>&emsp;&emsp;ServiceMesh解决跨语言的问题，给许多新兴小众语言带来利好。对于语言选择来说，最重要的就是生态，由于java语言生态丰富，很多完善的类库和框架，导致开发java应用会非常快速，因此市场上java程序员机会就比较多，像我这种原先鄙视java的都不得不从c++转到java上来。有了ServiceMesh以后，小众语言就可以避开这个弊端，不必和java比拼生态，而是发挥各自语言的优势。<br>&emsp;&emsp;最后放一张Istio的架构图结束全文，让我们全面拥抱新一代微服务ServiceMesh！<br><img src="/2018/11/13/新一代微服务ServiceMesh演化之路/Istio.jpg" alt=""></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinfei21.github.io/2018/11/10/人生如戏，戏如人生/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="费永军">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="金飞的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/10/人生如戏，戏如人生/" itemprop="url">人生如戏，戏如人生</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T14:27:20+08:00">
+                2018-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/杂说/" itemprop="url" rel="index">
+                    <span itemprop="name">杂说</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>&emsp;&emsp;本月11月3日，香港著名演员蓝洁瑛被发现死在自己的公寓里，相比她曾经靓绝五台山的辉煌过去，和她去世时的凄凉形成了鲜明反差，网络上许多网友不约而同的发出了红颜薄命的感叹。关于她演的电视剧和电影，我印象比较深的就是《大时代》和《大话西游》。她人生最后阶段竟如大时代她所饰演的玲姐一样让人觉得悲伤和凄凉。2018年去世了不少知名的人物，像李咏、金庸、单田方、李敖等，这些人物在人生最后阶段都是比较幸福的，正应了一句话幸福的人都是相似的，不幸的人各有各的不幸。<br>&emsp;&emsp;1963年，蓝洁瑛出生在一个普通的香港家庭，由于父亲重男轻女，在她年幼的时候，她的亲生父亲抛弃了他们母女，为了生存她母亲带着她改嫁，可惜继父是个有暴力倾向的人，经常打骂幼年的她，说她是拖油瓶。在这种环境下长大的蓝洁瑛，也养成了她比较倔强的性格，她渴望被人爱。或许凄惨的童年给她以后的人生定下了基调，若是没有走进娱乐圈，走其它不靠美色谋生的道路，或许人生又会是别的模样。<br>&emsp;&emsp;1983年，年仅20岁的蓝洁瑛陪同好友去报考无线培训班，不巧的是那天好友有事去不了，她去了而且被选中，成了无线电视艺员训练班的第12期学员。同批的学员都是当今的大腕，例如刘嘉玲、吴君如和刘青云。最初无线高层也十分看好她，让她做主持人和演电视剧。可惜她固执的性格，阻断了她成名路。进入无线后，当时她正当红，公司想和她续约，结果她拒绝了，导致无线高层震怒把她学藏了。身在娱乐圈的她，要谋生却不懂低头屈服于潜规则，遇到不喜欢的人和事也不懂变通。奈何蓝洁瑛市场呼声太高，雪藏复出拍戏的她还是不懂得低头，而这时的香港娱乐圈也是新人辈出，她的名气也大不如前了。<br>&emsp;&emsp;事业上蓝洁瑛不算成功，情场上也一波三折。她经历了2任男友，第一任是邓姓乡绅的儿子，热恋中的他却忽然开煤气自杀了。第二任是当时香港当红DJ钟保罗，可惜钟好赌，而且赌的都挺大的，赚的钱都不够还债的，蓝洁瑛也帮着一起还债，债务快还清的时候，钟却选择跳楼自杀了。这前后不到3年的时间，2任男友接连离去，给她的心理留下了挥之不去的阴影。<br>&emsp;&emsp;在1990年，媒体上爆料说：蓝洁瑛患有精神病遭到公司的雪藏。随着时间流逝，事实真相也浮出水面，原来她是遭遇到了香港娱乐大佬的性侵，这些遭遇给她留下了无法愈合的心理创伤，从而导致了她精神失常。当年刘嘉玲事件也闹得沸沸扬扬，刘嘉玲选择了勇敢走出来，而她选择了沉默没有报警。对于香港娱乐圈的黑暗，这位绝代风华的美人遭遇的不公和一生的痛楚，但凡有点同情心的都会随之动容。性侵事件遭媒体曝光后，不断有圈内人士向媒体爆料说蓝洁瑛的人品有问题。到如今，真相还未大白，斯人已离我们而去。。。。<br>&emsp;&emsp;蓝洁瑛长的那么美，在这个新的时代理应过得很好，她的人生本该是明朗顺遂，无奈前路却是一连串的暴风雪。在事业如日中天时，突然精神失常从此落寂和消沉，流浪街头，疾病缠身无人问，被媒体嘲讽为疯婆子。她这些年的境遇竟然在她饰演的《大时代》中的玲姐得到了很好的诠释。《大时代》是难得的对香港弱肉强食的资本社会控诉和质疑的电视剧，而在剧中承担控诉和质疑使命的，恰恰是一直被损害被逼迫，但也一直没有投降的玲姐。玲姐有个凄美的结局，在飞扬的像雪一样的泡沫粒子中，在和丁蟹完成了一番厮打之后，神智恢复了正常的她艰难的找到自己那枚20块钱的戒指，然后丢掉丁蟹的绿宝石戒指，用尽最后一丝力气把这枚象征着她一生为数不多的温暖时刻的戒指戴到手指上，然后面带微笑的死去，这时的背景音乐是王菲的《容易受伤的女人》，音乐加上剧情很奇异的产生了巨大的宿命感。<br>&emsp;&emsp;香港我今年5月份去过，实地体验了香港社会的氛围。在香港近百年的殖民统治，形成了香港人顺从的奴性，特别是越底层我的感受越明显。在高效而傲慢运转着的香港资本社会，依然源源不断地产出着因为三从四德、懂事隐忍成为豪门阔太的夸张故事，「不配合」和「不顺从」常常成为触发命运走向的那个关键开关。蓝洁瑛的「不顺从」成为这种隐秘逻辑的最佳反例，成为教育后来人的那个活灵活现的「下场」。香港媒体热衷记录蓝洁瑛的窘迫，不管是臃肿的身材，涣散的眼神，廉价的人字拖，灰白杂乱的头发，还是当众的精神失常，鬼鬼神神的言语，都是这「下场」的一部分。人们对蓝洁瑛的窥伺隐含了长久以来笑贫不笑娼的残忍逻辑，也满足了大多数人「只要有人比我过得更惨，我就不觉得自己的日子过得多差」的冷酷现实。<br>&emsp;&emsp;「玲姐」比蓝洁瑛幸运的是，在生命的尽头处，她拿出剪刀、西餐刀，抢过冲上来的警察的枪，不顾一切地冲向丁蟹，冲向这个制造了自己一生噩梦的男人，也冲向从不肯怜悯她、从没给过她一丝善意的命运，她决心不再忍受，一定要彻底地反抗、彻底地报复。很可惜，这样孤注一掷的痛快，没有出现在蓝洁瑛的生命中。<br>&emsp;&emsp;稍稍解脱和幸运的是，所有爱她、疼惜她的人唯一可以拿来自我安慰的是，这大约是蓝洁瑛最后一次上热搜和头条了，被围观，被窥伺，被损害，大概都是最后一次了。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://jinfei21.github.io/2018/10/30/浅谈深度学习/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1523,305 +1818,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jinfei21.github.io/2018/09/08/足球透着的历史/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="费永军">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="金飞的个人博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/08/足球透着的历史/" itemprop="url">足球透着的历史</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-08T11:44:55+08:00">
-                2018-09-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/杂说/" itemprop="url" rel="index">
-                    <span itemprop="name">杂说</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>&emsp;&emsp;今年是2018年距离北京奥运会已经过去了十年。话说十年树木百年树人，中国足球如一块朽木一样一如既往的烂。中国足球进世界杯的时候，那时我还在读高中，至今已经十几年过去了。我也不是一个足球迷，今年俄罗斯的世界杯也只全程看完最后一场。说实话，现在世界杯足球越来越无趣了。</p>
-<p>&emsp;&emsp;2018世界杯可以说是有史以来最无趣的一届杯赛。整个32支队基本分为两拨：</p>
-<ul>
-<li><p>传控足球的膜拜者，不顾自身实际情况盲目追求传控，为了传球而传球，不仅丢了自身的特点，反而显得球队很沉闷无聊，例如德国、英国。</p>
-</li>
-<li><p>防守反击的功利打法，在自家禁区前重兵防守，防守层次繁复，移动速度快，抓住机会，依靠快速传球简练配合，给对方致命一击，例如法国。</p>
-</li>
-</ul>
-<p>&emsp;&emsp;上面说的都不是重点，欧洲依靠这些年不断研发、迭代升级原有打法，逐渐弱化了球星的作用。所以现在很难再出现马拉多纳和球王贝利这样一人雄起整个球队的巨星。<br>&emsp;&emsp;传控足球打法名叫Tiki-Taka，最早始于荷兰足球，后被巴萨教父克鲁伊夫带到西班牙，经荷兰三剑客之一的里杰卡尔德发展，在瓜迪奥拉的手中发扬光大，最终帮助巴萨横扫欧洲，实现惊人的六连冠。<br>&emsp;&emsp;防守反击不是过去那种游击打法，后场找一个大脚前锋，能不能偷袭成功全靠运气。现在的反击蕴含在防守的整个体系中，反击不再是单点联线碰运气，而是渗透进了西班牙的传控、意大利的集体快速推进、英超的前场直线突进等打法的精髓，多点配合，几秒之内射门，成功概率非常高。<br>&emsp;&emsp;这两拨都是一个整体体系，是对过去足球战术的升级，建立在严谨的、理性的科学思维基础上。在这背后，运动员的饮食结构、训练方式、身体机能数据监控调节、康复机制、心理调节、对手数据分析等一系列后勤保障。这一项一项早已经过层层分析，建立起了非常高的技术壁垒，这种科学思维正是近代西方工业文明在全球竞争中的领先之道。<br>&emsp;&emsp;正如亚洲、非洲两大洲唯一小组出线，打进16强的球队竟然是受限于身材劣势、从上到下一心想脱亚入欧的日本。事实上，八强打完以后，世界杯就变成欧洲杯了，欧洲包揽了四强，统治了足球。<br>&emsp;&emsp;欧洲不是今天才控制足球。时间越接近现在，欧洲控制足球的优势越明显。未来，这种趋势会更加明显。以前人们一直有一个印象，就是以巴西、阿根廷、乌拉圭、哥伦比亚为代表的美洲球队，时不时在世界杯上战胜欧洲强队，而且巴西、阿根廷一直都是夺冠热门，好像足球就是美洲和欧洲两大集团对抗。但是其实一个隐蔽的事实是美洲足球也是欧洲足球的产品。为什么这么说？看看巴西、阿根廷乌拉圭国家队的球员构成，主力基本都是来自欧洲的五大联赛：意甲、西甲、德甲、法甲、英超。<br>&emsp;&emsp;前几年，央视拍了《大国崛起》的纪录片，深入分析了荷兰、西班牙、葡萄牙、英国、法国、德国、意大利等国的崛起之路。我惊讶的发现榜单上都是当今世界第一流的足球强国。<br>&emsp;&emsp;简而言之，足球是现实社会的滞后历史缩影。<br>&emsp;&emsp;许多年来，中国足球成为全民调侃对象，始终没有人说清它背后的原因。被骂的最多的就是国足和足协主席。国足当然踢得差劲，足协主席也够无耻，但是站在大历史的角度，他们都是历史中的无辜个体。单就个人能力而言，历任足协主席其实也不错，如果他们去创业，成功的概率肯定高于大部分骂他们的人。<br>&emsp;&emsp;还有人说人种问题，说黄种人不适合踢足球。这完全是胡说，在足球世界里，运动员的天赋固然重要，但不是最核心的。不然，拥有第一流运动天赋的非洲球队就不会被集体团灭，连亚洲都不如，而同样拥有14个非洲裔的法国队却夺冠了。<br>&emsp;&emsp;究其原因，工业文明与后工业文明降维攻击的胜利。国足这些年搞得人神共愤，就是因为当代中国足球还处在封建社会末期，刚刚处于近代社会接触到了现代世界，但是离得很远。这种情况有点类似刚刚经历过鸦片战争，火烧圆明园、甲午战争的近代中国。<br>&emsp;&emsp;上世纪90年代，中国和日本在面对西方力量的冲击下，面对现实的巨大差距决心变法图强。不过他们进行的不是明治维新也不是戊戌变法，而是足球的市场化改革。<br>&emsp;&emsp;日本足球职业化改革几乎和中国同时进行，和中国一样同属菜鸟级别，由于身体力量速度等天赋不行，日本足球常常被中国足球虐菜。不同的是，1993年开始日本足球职业J联赛从正式推出就获得巨大成功，很快就成为亚洲最成功的职业联赛。日本足球也由此称雄亚洲，不久更是走向世界，自1998年后，日本每次都能入围世界杯，更是三次打进16强。<br>&emsp;&emsp;而进行市场化改革后的中国足球是什么现状呢？除了2002年打进一次世界杯，一球未进，一分未得之外，再无入围记录。而且中国足球每况愈下，到后来连十强赛等外围赛都进不去，常常沦为叙利亚、科威特等亚洲二流足球的背景板。<br>&emsp;&emsp;中国足球职业化市场化改革失败，日本职业化大获成功，正如19世纪差不多时间进行的明治维新、戊戌变法结局的翻版。当同为儒家文明体系的下的中日两国面对西方的冲击，日本明治维新导致了社会空前发展，先后在日俄战争中、甲午战争中打败对手，从此跻身世界强国。而中国戊戌变法则一地鸡毛。<br>&emsp;&emsp;2004年亚洲杯在中国本土进行，中国队一路过关斩将，甚至将亚洲足球强国伊朗拉下马，眼看就要夺得第一座大赛冠军，却在决赛中遇到日本二队。正如甲午战争中依靠偷袭得手，决赛中，日本依靠一粒决定胜负的犯规手球偷袭成功，终止了中国足球的发展，中国足球从此每况愈下。<br>&emsp;&emsp;同时起步，基础比日本好，为什么中国足球失败了？在大历史的眼里没有什么是偶然的。中国足球失败和戊戌变法的原因是一样的。<br>&emsp;&emsp;由于权力崇拜的封建历史足够长，惯性缓冲力量足够大，中国任何的变法和革新都注定艰难而曲折，顽固的保守派绝对不会轻易放下手中的权力。足球领域的市场化改革就如张之洞、左宗棠、李鸿章的洋务运动一样注定是失败的。<br>&emsp;&emsp;中国足球的罪魁祸首不只是足协这么简单，更根本的是牢牢抓住皇权不放的体育总局。1992年红山口会议之后，开始职业化市场化改革了，中国职业联赛就应该像日本J联赛、英超、德甲一样将主导权交给市场。<br>&emsp;&emsp;但是，慈禧太后们不愿意了？这些年，牢牢抓住职业联赛市场化大权的太后们主要办了以下大事。</p>
-<ul>
-<li><p>首先在精神上进行高尚诉求，仁义道德礼义廉耻。每次大赛失败，秉承体育总局意旨的足协一定会大谈爱国主义、艰苦奋斗。爱国这种精神，只能建立在尊重规律、科学的组织制度基础上，泛爱国主义的大刀长矛是打不过训练有素的坚船利炮的。</p>
-</li>
-<li><p>其次权力胡作非为。在联赛层面，各种神奇的指导意见层出不穷。在国家队层面，什么奥运球员组队打甲A，队委会负责制，赛前讲两句。。。总之是领导灵机一动，大腿一拍，伟大创意就出来了。搞到后来，竟然出现花钱才能进国家队，国家队双主教练的奇葩事。今天学巴西，明天学意大利，后天学英国，大后天学德国、西班牙，领导说啥就是啥。连日本足协主席川渊三郎都不耐烦了，说你们每一任主席都带队来考察学习，每次我们都跟你们讲了同样的东西，为什么要不停重复呢？</p>
-</li>
-</ul>
-<p>&emsp;&emsp;为什么？因为他们都不懂足球啊。<br>&emsp;&emsp;看看历任足协主席都是如何从天而降的吧：阎世铎是体育总局办公厅主任出身、谢亚龙由体育总局电子信息中心转任（后被捕入狱，一起被判刑的还有足协副主席南勇、杨一民）、韦迪由汽摩中心转任、蔡振华由乒羽中心转任、张剑来自体育总局政策法规司……没有一个是足球专业的。<br>&emsp;&emsp;权力说你行，你就是领导。至于你把中国足球领导到哪里去，那就听天由命吧，反正你只对领导负责就行。<br>&emsp;&emsp;一个人不懂足球也不是完全不能领导足球。只要潜行学习，掌握科学，尊重规律，也能推动足球事业发展的。但悲剧的是，这些人往往刚摸清楚足球是怎么回事，就调走了，再调来一个新手重新学习，胡作非为再来一遍。<br>&emsp;&emsp;最新的一任足协负责人杜兆才来自田径，据说他正在搞田径+足球混合选材制度。别人家的足球已经在科学的路上越走越远，连美洲都将被欧洲拉开差距，我们还在折腾中国特色的足球之路。<br>&emsp;&emsp;鲁迅说拿来主义，别的领域不好说，足球领域一定是通行的道理。好的东西，拿来用就行，足球能有什么特色？别人已经探索了一百多年的东西，就真的不如你的特色高明？<br>&emsp;&emsp;学习“胡服骑射”的赵国，不丢人。权力应该退出不属于它的地方，做好监督、调节、服务就好。要相信人民，人民有能力做好人民自己的事情。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://jinfei21.github.io/2018/09/02/知的三座山/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="费永军">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="金飞的个人博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/02/知的三座山/" itemprop="url">知的三座山</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-02T09:50:29+08:00">
-                2018-09-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/哲学/" itemprop="url" rel="index">
-                    <span itemprop="name">哲学</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>&emsp;&emsp;今天聊一个关于知和认识的话题。说到这个话题，我们先从一段禅宗公案开始。<br>&emsp;&emsp;宋代有过一个著名的禅宗公案，一位大师说，自己在悟道之前，看山是山，看水是水；悟道之后，看山不是山，看水不是水；但是到功力更深了之后，看山还是山，看水还是水。<br>&emsp;&emsp;有过佛学经历的人对上面这段公案应该是再熟悉不过了。各家解释也各不相同，但是不管怎样都有点类似苏格拉底说的不经思考的人生是不值得过的意味。最初我们认识事物的时候，总是从表像去认识事物，等到认识深了总想搞清里面的原理，不能从表象认识事物，等到原理搞清楚了，回过头来看当时认识的事物，这时你会更深刻。对应到这段公案，大师在最初的看山是山，那是第一层山，从表象认识事物，等到大师悟道一定境界，意识到山不过是一大推石头堆起来的，这堆石头因为偶然的机缘而堆在一起，于是被称为山，山只是石头的集合体而已。如果这堆石头分散在世界各地，石头还是那些石头，但就不是那座山了。在这种情况下，你意识到山只不过是你对一堆这样的石头赋予的一种称谓，它是你赋予的。它不是实质性的存在，你到这层就到了见山不是山的境界了。这个时候你的世界是崩塌的，你还想继续深入。到更深一层境界，你终于认识到人的认知能力是有限的，人的理性也是有限的。人只能以这种方式去理解世界，尽管我所理解的世界它不是客观存在，也不是客观真实，甚至什么事客观存在，什么事客观真实都说不清。你在理会这层以后，你就见山还是山，见水还是水了。因为你已经意识到人只能以这种方式思考，不能脱离它之外去说事。这就是第三层山，你说出来还是山，但和你说第一层山的时候，意思已经极为不同了，<br>&emsp;&emsp;上面的解释中，我们知道认识和知是有三座山，你只有看到第三座山才算真正悟道了。但是话又说回来，三座山的难度一座比一座大，特别是第二座山，你的世界观是崩溃的。这估计也是禅宗经常表现为各种顿悟公案的原因。就是你能悟道就悟道，不能悟道就拉倒，免得因为悟性不够搞乱自己的世界。<br>&emsp;&emsp;其实西方哲学家柏拉图对这个问题也有一套说法。柏拉图在他的哲学里面提出过这样一个问题，他说“学习究竟是如何成为可能的？”。<br>&emsp;&emsp;你学的是你已经知道的东西吗？不是。已经知道的东西你用不着学。那你学的是你不知道的东西吗？也不是。因为你不知道的东西，你都不知道你不知道，你不知道你不知道的时候，你根本就不会去学。而你已经知道的你也不会去学，那你要学的究竟是什么呢？你要学的实际上是，你知道你不知道的东西。只有你知道你不知道，你才有可能学。你不知道你不知道，你根本不可能学。那么，“你知道你不知道”这东西是哪来的？它不可能别人教给你，这不是别人教给你的，实际上是天赋的。就像我们骑自行车，刚开始你不会骑，保持不了平衡，也没有人教你一套保持平衡的方法，你上去骑就是了，你最终学会了会保持平衡了，但是你也不知道你是如何保持平衡的。如果你不反思的话，你甚至都意识不到你不知道。直到你反思，你才意识到你会保持平衡了，但确实你不知道你是如何保持平衡的。<br>&emsp;&emsp;已经比较烧脑了，再举个例子。世界上有一种大马哈鱼，它每一到它成熟的季节，就是到它成熟的这种年龄，它就一定要洄游，要洄游到当初它出生的地方，回到那儿来产卵，产完卵就死了。等那卵孵出来之后，在蛋壳长一段儿，进入大海。然后等到它成熟的年龄，再回到它当初出生的地方。为啥一定要洄游？它自己不知道，我们也不知道。而且也不是它父母教它们的，因为它生出来的时候它父母已经死了。而且它究竟是如何找到洄游这地儿的，也都说不清楚。但是它就是非得洄游，而且它知道如何去找到它出生那地儿，但它说不清楚为啥一定要洄游，类似于这种的，都是属于你知道你不知道的东西。<br>&emsp;&emsp;柏拉图说，只有这个东西，才是需要去学的。其它东西都是你不必学或者不可能学的。而这个你知道你不知道的东西，柏拉图称之为“天赋的理念”。这个天赋的理念，把它赋在人的精神世界里，赋在人的精神能力里面。人不知道它从哪来的，这是一方面。另一方面，它其中有一部分是语言可表达的。但其中还有一部分，甚至超出了语言的表达能力之外。<br>&emsp;&emsp;比如把唐诗翻译为英文，当你用汉语读唐诗的时候，你能从语调和画面意境感受到唐诗的美。但是当用英文读唐诗时，你会觉得失去了什么？丢了什么你也说不清，但你明确的知道丢失了，你表达不出来，却能直接感受到它。<br>&emsp;&emsp;柏拉图的老师苏格拉底被雅典公民大会判处死刑，说他败坏青年。因为苏格拉底在雅典城邦到处找人辩论，说你不要孝敬父母，如果不明白为什么要孝敬父母，你就去孝敬，此时根本不叫孝敬，直到你明白为什么要孝敬父母后，然后你再去孝敬，这时才叫真正的孝敬。<br>&emsp;&emsp;实际上，苏格拉底的意思就是说，如果你盲目的孝敬父母，那就是第一层，“见山是山”。但是，你懂得“我不要盲目地去孝敬父母”的时候，就进到第二层了，见山就不是山了。因为我必须得懂得孝敬父母的意义是什么。但是你到了第二层不够，你还必须继续往前走，走到第三层，就是我终于搞明白，孝敬父母的意义是什么了，此时我再去孝敬父母，这才是真正的孝敬，就见山还是山了。你见到的还是山，但是山的意义完全不一样，那么在这种情况之下，就到了第三层山。<br>&emsp;&emsp;但是，雅典公民大会最后把他给判处死刑，原因是什么呢？他告诉人们：第一层山是假的，你应该通过第二层山达到第三层山，但是能够达到第三层山的人需要很高的悟性，多一半人到不了。多一半人都只是，“哦，第一层山是假的，那我不进了”，到了第二层山，然后到这儿，打住了，他没能力往前走。于是在这种情况之下，人们全都不孝敬父母了，只有少数人有能力完成足够的反思，进入到第三层山，重新开始孝敬父母。<br>&emsp;&emsp;柏拉图因为对老师的死耿耿于怀，后期写作中对民主是批判的，更是小心翼翼珍藏起自己的表达意图。以至于施特劳斯把他称为一种微言大义的隐微写作高手。什么意思？就是只有真正的高手才能读懂柏拉图，他给你的是三座山。如果你不是高手，你只能看到第一层山。表面上他说的是第一层山，其实他是想给你第三层山。如果你看不到也没有关系，你的世界观或者社会秩序不至于受到颠覆。而他想给出的真正的深刻的东西，也能给的出来。<br>&emsp;&emsp;关于知的三座山聊到这，希望你能做一个看的见、看的明白、最后揣着明白装“糊涂”的人。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1872,7 +1868,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1894,7 +1890,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
