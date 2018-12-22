@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 金飞的个人博客
+title: 金哥铁码
 subtitle: 上善若水，知行合一
 description: 简单靠谱，追求自由
 keywords: 哲学 佛学 互联网
@@ -88,8 +88,8 @@ deploy:
 
 # Extensions
 Plugins:
-- hexo-generator-feed
-- hexo-generator-sitemap
+- hexo-generator-sitemap- hexo-generator-feed
+
 #Feed Atom
 feed:
   type: atom
